@@ -1,12 +1,16 @@
-import Link from 'next/link'
-import { Scale, FileText, Users, Gavel, Home, FileCheck, ArrowRight } from 'lucide-react'
+'use client';
 
-// NOTA: Se ha agregado un campo `href` a los servicios para poder enlazar la tarjeta completa.
+import Link from 'next/link'
+// Importar Types explícitos para Framer Motion
+import { motion, Variants, Transition } from 'framer-motion'; 
+import { Scale, FileText, Users, Gavel, Home, FileCheck, ArrowRight, Star } from 'lucide-react' 
+
+// --- DATA ORIGINAL ---
 const services = [
   {
     title: 'Accidentes',
     icon: Scale,
-    href: '/areas-legales/accidentes',
+    href: '/servicios/accidentes', 
     items: [
       'Accidentes de aviación',
       'Accidentes automovilísticos',
@@ -18,7 +22,7 @@ const services = [
   {
     title: 'Migración',
     icon: FileText,
-    href: '/areas-legales/migracion',
+    href: '/servicios/inmigracion', 
     items: [
       'Defensa contra la deportación',
       'Residencia por un familiar',
@@ -31,7 +35,7 @@ const services = [
   {
     title: 'Seguros',
     icon: Home,
-    href: '/areas-legales/seguros',
+    href: '/servicios/seguros', 
     items: [
       'Reclamaciones por granizo',
       'Reclamaciones por tormentas de viento',
@@ -42,7 +46,7 @@ const services = [
   {
     title: 'Ley Criminal',
     icon: Gavel,
-    href: '/areas-legales/ley-criminal',
+    href: '/servicios/ley-criminal', 
     items: [
       'Violencia Doméstica',
       'Asalto',
@@ -54,7 +58,7 @@ const services = [
   {
     title: 'Familia',
     icon: Users,
-    href: '/areas-legales/familia',
+    href: '/servicios/familia', 
     items: [
       'Divorcios',
       'Custodia',
@@ -64,93 +68,128 @@ const services = [
   {
     title: 'Planificación Patrimonial',
     icon: FileCheck,
-    href: '/areas-legales/planificacion-patrimonial',
+    href: '/servicios/planificacion', 
     items: [
       'Testamentos',
     ],
   },
 ]
 
-export default function Services() {
-  return (
-    <section id="servicios" className="py-20 md:py-28 bg-white"> 
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-gray-800">
-            Nuestras <span className="text-[#B2904D]">Áreas Legales</span>
-          </h2>
-          <p className="text-xl text-gray-600">
-            Expertos en diversas áreas del derecho para proteger sus derechos.
-          </p>
-        </div>
+// --- TIPIFICANDO EXPLÍCITAMENTE LAS VARIANTES ---
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
 
-        {/* CLAVE DE LA SOLUCIÓN:
-          1. md:grid-cols-2 lg:grid-cols-3: Define la cuadrícula.
-          2. items-stretch: Hace que los elementos hijos (las tarjetas) se estiren para tener la misma altura.
-        */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 50, scale: 0.8 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1,
+    // La transición ahora usa el tipo compatible Transition
+    transition: { 
+      type: "spring",
+      stiffness: 100
+    } as Transition, // Usamos aserción para asegurar la compatibilidad si es necesario
+  },
+};
+// --- FIN DE TIPIFICACIÓN ---
+
+
+export default function Services() {
+
+  return (
+    <section id="servicios" className="py-32 relative bg-white overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 relative z-10">
+        
+        {/* --- ENCABEZADO --- */}
+        <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="mb-20 text-center"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ type: "spring", stiffness: 200 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 border border-gray-200/60 backdrop-blur-xl shadow-sm mb-8"
+            >
+              <Star size={14} className="text-[#B2904D] fill-[#B2904D]" />
+              <span className="text-xs font-bold tracking-[0.2em] text-gray-500 uppercase">EXPERIENCIA COMPROBADA</span>
+            </motion.div>
+            
+            <h2 className="text-4xl md:text-5xl font-serif font-black text-[#002342] mb-6">
+              Nuestras <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B2904D] to-[#D4AF37]">Áreas Legales</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Expertos en diversas áreas del derecho para proteger sus derechos.
+            </p>
+          </motion.div>
+        {/* --- FIN ENCABEZADO --- */}
+        
+        <motion.div
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+        >
           {services.map((service, index) => {
             const Icon = service.icon
             return (
-              // El Link debe ser un bloque para que la tarjeta se estire correctamente
-              <Link
-                key={index}
-                href={service.href} 
-                className="block" 
-              >
-                <div
-                  className="bg-gray-50 p-8 rounded-xl shadow-lg border-2 border-transparent 
-                             hover:border-[#B2904D] hover:shadow-2xl transition-all duration-300 
-                             transform hover:-translate-y-2 group h-full flex flex-col justify-between" // CLAVE: h-full y flex/flex-col/justify-between
+              <motion.div key={index} variants={itemVariants} className="block">
+                <Link
+                  href={service.href} 
+                  className="block h-full" 
                 >
-                  <div className="flex items-center mb-6 border-b border-gray-200 pb-4">
-                    <div className="bg-[#B2904D] p-3 rounded-full group-hover:bg-[#9a7a3d] transition-colors duration-300 shadow-md">
-                      <Icon className="w-8 h-8 text-white" />
+                  <motion.div
+                    className="bg-white/70 backdrop-blur-md p-8 rounded-[2rem] shadow-xl border border-gray-100 transition-all duration-300 transform hover:scale-[1.02] group h-full flex flex-col justify-between
+                                shadow-[0_20px_40px_-15px_rgba(0,0,0,0.25)] 
+                                hover:border-[#B2904D] hover:shadow-[0_30px_60px_-15px_rgba(0,35,66,0.5),_0_0_0_3px_rgba(178,144,77,0.5)]"
+                    whileHover={{ y: -5 }}
+                  >
+                    <div>
+                        <div className="flex items-center mb-6 border-b border-gray-100 pb-4">
+                            {/* Icono Principal */}
+                            <div className="w-14 h-14 bg-[#002342] p-3 rounded-xl group-hover:bg-gradient-to-br group-hover:from-[#B2904D] group-hover:to-[#D4AF37] transition-colors duration-300 shadow-lg flex items-center justify-center">
+                                <Icon className="w-6 h-6 text-white" />
+                            </div>
+                            {/* Título */}
+                            <h3 className="text-2xl font-serif font-bold ml-4 text-[#002342] group-hover:text-[#B2904D] transition-colors duration-300">
+                                {service.title}
+                            </h3>
+                        </div>
+
+                        {/* Lista de Ítems (SIN FLECHAS) */}
+                        <div>
+                            <ul className="space-y-3">
+                                {service.items.slice(0, 4).map((item, idx) => ( 
+                                    <li key={idx} className="flex items-start text-gray-700">
+                                        <div className="w-1.5 h-1.5 bg-[#B2904D] rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                        <span className="font-medium text-sm">
+                                            {item}
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
-                    <h3 className="text-2xl font-bold ml-4 text-gray-800 group-hover:text-[#B2904D] transition-colors duration-300">
-                      {service.title}
-                    </h3>
-                  </div>
-
-                  {/* Lista de Ítems */}
-                  <div> {/* Este div asegura que la lista empuje el botón hacia abajo */}
-                    <ul className="space-y-3">
-                      {service.items.slice(0, 4).map((item, idx) => ( // Limitar a 4 ítems
-                        <li key={idx} className="flex items-center group/item text-gray-700">
-                          <ArrowRight className="w-4 h-4 text-[#B2904D] mr-3 flex-shrink-0 group-hover/item:text-[#9a7a3d] transition-colors" />
-                          <span className="font-medium text-sm">
-                            {item}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {/* Botón/Enlace de "Saber Más" alineado en la parte inferior */}
-                    {service.items.length > 4 && (
-                      <div className="pt-4 mt-4 border-t border-gray-100">
-                         <span className="text-sm font-semibold text-[#B2904D] hover:text-[#9a7a3d] transition-colors">
-                            Ver todos los temas ({service.items.length})
-                         </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </Link>
+                  </motion.div>
+                </Link>
+              </motion.div>
             )
           })}
-        </div>
-
-        <div className="text-center mt-16">
-          <Link
-            href="/areas-legales"
-            className="inline-flex items-center bg-[#B2904D] text-white px-10 py-4 rounded-full font-semibold text-lg
-              hover:bg-[#9a7a3d] transition-all duration-300 shadow-xl hover:shadow-2xl 
-              transform hover:scale-[1.02]"
-          >
-            Ver Todas las Áreas Legales
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </Link>
-        </div>
+        </motion.div>
+        
       </div>
     </section>
   )

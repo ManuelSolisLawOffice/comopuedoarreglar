@@ -1,35 +1,49 @@
-import { MapPin, Phone, Mail, ExternalLink } from 'lucide-react'
+'use client';
+
+import { MapPin, Phone, Mail, ExternalLink, Scale } from 'lucide-react'
 import Image from 'next/image'
+import { motion, Variants, Transition } from 'framer-motion';
+
+// Función auxiliar para generar URLs de Google Maps válidas
+const generateMapUrl = (address: string) => {
+    // Reemplaza espacios por '+' y usa la URL base de Google Maps
+    const encodedAddress = encodeURIComponent(address);
+    return `https://maps.google.com/?q=${encodedAddress}`;
+};
+
+// --- COLORES DE LA PALETA ---
+const PRIMARY_COLOR_DARK = '#002342';
+const ACCENT_COLOR_GOLD = '#B2904D';
 
 const offices = [
-  // 1. HOUSTON (OFICINA PRINCIPAL) - Usa /offices/houston.jpg
+  // 1. HOUSTON (OFICINA PRINCIPAL)
   {
     city: 'HOUSTON',
     subtitle: 'OFICINA PRINCIPAL',
     address: '6657 Navigation Blvd, Houston, Texas 77011',
     phone: '(713) 701-1731',
     email: 'houston@manuelsolis.com',
-    mapUrl: 'https://maps.app.goo.gl/g3JosFZG1xqsksqX9',
+    mapUrl: generateMapUrl('6657 Navigation Blvd, Houston, Texas 77011'), // URL CORREGIDA
     image: '/offices/houston.jpg',
   },
-  // 2. HARLINGEN - Usa /offices/houston.jpg
+  // 2. HARLINGEN
   {
     city: 'HARLINGEN',
     subtitle: 'ABOGADO DE INMIGRACIÓN',
     address: '320 E. Jackson St., Harlingen, Texas 78550',
     phone: '(956) 597-7090',
     email: 'harlingen@manuelsolis.com',
-    mapUrl: 'https://maps.app.goo.gl/ShBS5fPeP8r2bgAbA',
+    mapUrl: generateMapUrl('320 E. Jackson St., Harlingen, Texas 78550'), // URL CORREGIDA
     image: '/offices/houston.jpg',
   },
-  // 3. NUEVA OFICINA DE HOUSTON (BELLAIRC/CHINO) - Usa /offices/houston.jpg
+  // 3. HOUSTON BELLAIRE (CORRECCIÓN DE ERROR 404)
   {
     city: 'HOUSTON BELLAIRE',
     subtitle: 'SERVICIO EN CHINO',
     address: '9600 Bellaire Blvd, Suite 237, Houston, TX 77036',
     phone: '(713) 701-1731',
     email: 'bellaire@manuelsolis.com',
-    mapUrl: 'http://googleusercontent.com/maps.google.com/new-houston',
+    mapUrl: generateMapUrl('9600 Bellaire Blvd, Suite 237, Houston, TX 77036'), // URL CORREGIDA
     image: '/offices/houston.jpg',
   },
   {
@@ -38,7 +52,7 @@ const offices = [
     address: '1120 Empire Central place, Dallas, Texas 75247',
     phone: '(214) 753-8315',
     email: 'dallas@manuelsolis.com',
-    mapUrl: 'https://maps.app.goo.gl/uTSrWbvfzvutgQF38',
+    mapUrl: generateMapUrl('1120 Empire Central place, Dallas, Texas 75247'), // URL CORREGIDA
     image: '/offices/dallas.jpg',
   },
   {
@@ -47,97 +61,149 @@ const offices = [
     address: '3632 Admiral Street, El Paso, Texas 79925',
     phone: '(915) 233-7127',
     email: 'elpaso@manuelsolis.com',
-    mapUrl: 'https://maps.app.goo.gl/Q8Ev3byF5N1MRuyH7',
+    mapUrl: generateMapUrl('3632 Admiral Street, El Paso, Texas 79925'), // URL CORREGIDA
     image: '/offices/dallas.jpg',
   },
-  // LOS ANGELES - Usará /offices/losangeles.jpg
+  // LOS ANGELES
   {
     city: 'LOS ANGELES',
     subtitle: 'CALIFORNIA',
     address: '8337 Telegraph Rd, Unit 115, Pico Rivera, California 90660',
     phone: '(213) 784-1554',
     email: 'losangeles@manuelsolis.com',
-    mapUrl: 'https://maps.app.goo.gl/UtmFeALXTroYF53i6',
-    image: '/offices/losangeles.jpg', // Imagen sin cambios
+    mapUrl: generateMapUrl('8337 Telegraph Rd, Unit 115, Pico Rivera, California 90660'), // URL CORREGIDA
+    image: '/offices/losangeles.jpg',
   },
-  // CHICAGO - Usará /offices/chicago.jpg
+  // CHICAGO
   {
     city: 'CHICAGO',
     subtitle: 'ILLINOIS',
     address: '6000 West Cermak Road, Cicero, Illinois 60804',
     phone: '(312) 477-0389',
     email: 'chicago@manuelsolis.com',
-    mapUrl: 'https://maps.app.goo.gl/XEKaiEeFnj9aykbT8',
-    image: '/offices/chicago.jpg', // Imagen sin cambios
+    mapUrl: generateMapUrl('6000 West Cermak Road, Cicero, Illinois 60804'), // URL CORREGIDA
+    image: '/offices/chicago.jpg',
   },
-  // DENVER - Usará /offices/losangeles.jpg
+  // DENVER
   {
     city: 'DENVER',
     subtitle: 'COLORADO',
     address: '5400 Ward Road, Building IV, Arvada, Colorado 80002',
     phone: '(720) 358-8973',
     email: 'denver@manuelsolis.com',
-    mapUrl: 'https://maps.app.goo.gl/nfaq5jQHbMP6ewYRA',
-    image: '/offices/losangeles.jpg', // IMAGEN CAMBIADA
+    mapUrl: generateMapUrl('5400 Ward Road, Building IV, Arvada, Colorado 80002'), // URL CORREGIDA
+    image: '/offices/losangeles.jpg',
   },
-  // MEMPHIS - Usará /offices/chicago.jpg
+  // MEMPHIS
   {
     city: 'MEMPHIS',
     subtitle: 'TENNESSEE',
     address: '3385 Airways Boulevard, Suite 320, Memphis, Tennessee 38116',
     phone: '(901) 557-8357',
     email: 'memphis@manuelsolis.com',
-    mapUrl: 'https://maps.app.goo.gl/xH3CXmU1fJb6t9U56',
-    image: '/offices/chicago.jpg', // IMAGEN CAMBIADA
+    mapUrl: generateMapUrl('3385 Airways Boulevard, Suite 320, Memphis, Tennessee 38116'), // URL CORREGIDA
+    image: '/offices/chicago.jpg',
   },
 ].sort((a, b) => a.city.localeCompare(b.city)) 
 
+// --- VARIANTS CORREGIDAS CON TIPADO EXPLÍCITO ---
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 50, scale: 0.9 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 100
+    } as Transition, 
+  },
+};
+
+// --- COMPONENTE PRINCIPAL ---
 export default function Offices() {
   return (
-    <section id="oficinas" className="py-20 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Nuestras <span className="text-[#B2904D]">Oficinas</span>
-          </h2>
-          <p className="text-xl text-gray-600">
-            Haga clic en una de las ciudades siguientes para leer más
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <section id="oficinas" className={`py-32 bg-white text-[${PRIMARY_COLOR_DARK}] font-sans`}>
+      <div className="max-w-7xl mx-auto px-4">
+        
+        {/* --- ENCABEZADO ESTILO PREMIUM --- */}
+        <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="mb-20 text-center"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 border border-gray-200/60 backdrop-blur-xl shadow-sm mb-8">
+              <Scale size={14} className={`text-[${ACCENT_COLOR_GOLD}] fill-[${ACCENT_COLOR_GOLD}]`} />
+              <span className="text-xs font-bold tracking-[0.2em] text-gray-500 uppercase">CONTACTO GLOBAL</span>
+            </div>
+            
+            {/* Título: Font Serif Black, Dorado en acento */}
+            <h2 className={`text-4xl md:text-5xl font-serif font-black mb-4 text-[${PRIMARY_COLOR_DARK}]`}>
+              Nuestras <span className={`text-transparent bg-clip-text bg-gradient-to-r from-[${ACCENT_COLOR_GOLD}] to-[#D4AF37]`}>Oficinas</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Haga clic en una de las ciudades siguientes para leer más
+            </p>
+          </motion.div>
+        
+        {/* --- GRID DE OFICINAS --- */}
+        <motion.div 
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {offices.map((office, index) => (
-            <div
+            <motion.div
               key={index}
-              className="bg-white rounded-lg shadow-lg overflow-hidden 
-                         hover:shadow-2xl hover:translate-y-[-4px] transition-all duration-300" 
+              variants={itemVariants}
+              className="bg-white rounded-[2rem] shadow-xl overflow-hidden group 
+                         shadow-[0_15px_30px_-10px_rgba(0,0,0,0.15)] 
+                         hover:shadow-[0_20px_40px_-10px_rgba(0,35,66,0.3)] 
+                         hover:translate-y-[-5px] transition-all duration-300 border border-gray-100" 
             >
               {/* Image */}
-              <div className="relative h-48">
+              <div className="relative h-48 overflow-hidden">
                 <Image
                   src={office.image}
                   alt={`Oficina ${office.city}`}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  priority={index < 3}
                 />
+                {/* Overlay sutil para el título */}
+                <div className={`absolute inset-0 bg-gradient-to-t from-[${PRIMARY_COLOR_DARK}]/30 to-transparent`}></div>
               </div>
 
               {/* Content */}
-              <div className="p-6 space-y-4">
-                <h3 className="text-2xl font-bold text-[#B2904D]">
+              <div className="p-8 space-y-5">
+                <h3 className={`text-3xl font-serif font-black text-[${PRIMARY_COLOR_DARK}] group-hover:text-[${ACCENT_COLOR_GOLD}] transition-colors leading-tight`}>
                   {office.city}
-                  <span className="block text-sm text-gray-600 font-medium mt-1">
+                  <span className={`block text-sm text-gray-500 font-bold uppercase tracking-widest mt-1`}>
                     {office.subtitle}
                   </span>
                 </h3>
 
-                <div className="space-y-3 pt-2 border-t border-gray-100">
+                <div className="space-y-4 pt-4 border-t border-gray-200">
                   
                   {/* Dirección */}
                   <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-[#B2904D] flex-shrink-0 mt-1" />
-                    <p className="text-gray-700 text-sm">{office.address}</p>
+                    <MapPin className={`w-5 h-5 text-[${ACCENT_COLOR_GOLD}] flex-shrink-0 mt-1`} />
+                    <p className="text-gray-700 font-medium text-base">{office.address}</p>
                   </div>
 
                   {/* Obtener Dirección (Mapa) */}
@@ -145,34 +211,34 @@ export default function Offices() {
                     href={office.mapUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-[#B2904D] hover:text-[#9a7a3d] transition-colors"
+                    className={`flex items-center gap-2 text-[${PRIMARY_COLOR_DARK}] hover:text-[${ACCENT_COLOR_GOLD}] transition-colors font-bold text-sm`}
                   >
                     <ExternalLink className="w-4 h-4" />
-                    <span className="text-sm font-medium">Obtener dirección</span>
+                    <span className="underline">Obtener dirección</span>
                   </a>
 
                   {/* Email */}
                   <a
                     href={`mailto:${office.email}`}
-                    className="flex items-center gap-3 text-gray-700 hover:text-[#B2904D] transition-colors"
+                    className={`flex items-center gap-3 text-gray-700 hover:text-[${ACCENT_COLOR_GOLD}] transition-colors`}
                   >
-                    <Mail className="w-5 h-5 text-[#B2904D]" />
+                    <Mail className={`w-5 h-5 text-[${ACCENT_COLOR_GOLD}]`} />
                     <span className="text-sm">{office.email}</span>
                   </a>
 
                   {/* Teléfono */}
                   <a
                     href={`tel:${office.phone.replace(/[^0-9]/g, '')}`}
-                    className="flex items-center gap-3 text-gray-700 hover:text-[#B2904D] transition-colors"
+                    className={`flex items-center gap-3 text-gray-700 hover:text-[${ACCENT_COLOR_GOLD}] transition-colors`}
                   >
-                    <Phone className="w-5 h-5 text-[#B2904D]" />
-                    <span className="text-sm font-semibold">{office.phone}</span>
+                    <Phone className={`w-5 h-5 text-[${ACCENT_COLOR_GOLD}]`} />
+                    <span className="text-base font-bold">{office.phone}</span>
                   </a>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   )

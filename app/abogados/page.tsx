@@ -378,7 +378,7 @@ const attorneys = [
     id: 'lupita-valenzuela-martinez',
     name: 'Lupita Valenzuela Martinez',
     role: 'Abogada (Memphis)',
-    image: 'https://manuelsolis.com/wp-content/uploads/2025/07/Lupita-Valenzuela-Martinez-922x1024.png',
+    image: '/lupita.png',
     video: null,
     bio: [
       "Ejerce la abogacía con pasión y entrega desde nuestra oficina de Memphis. Su mayor inspiración proviene de ayudar a quienes no pueden defenderse por sí mismos, y su misión es asegurar que todos reciban la representación comprometida y valiente que merecen. Su trabajo está profundamente guiado por el deseo de servir a la comunidad hispana, motor que alimenta su vocación día a día.",
@@ -426,7 +426,7 @@ export default function AttorneysPage() {
       <section className="relative pt-40 pb-24 px-4 overflow-hidden">
         <div className="absolute inset-0 z-0">
              <div className="absolute inset-0 bg-[#002342] opacity-95"></div>
-             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-[500px] bg-[#B2904D] opacity-20 rounded-full blur-[120px] animate-pulse"></div>
+             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-[500px] bg-[#B2904D] opacity-20 rounded-full blur-[120px]"></div>
              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-overlay"></div>
         </div>
 
@@ -472,7 +472,9 @@ export default function AttorneysPage() {
                       src={attorney.image} 
                       alt={attorney.name}
                       fill
-                      className="object-cover object-top"
+                      className={attorney.id === 'lupita-valenzuela-martinez' 
+                        ? "object-cover object-[center_20%]" 
+                        : "object-cover object-top"}
                       onError={handleImageError}
                       unoptimized 
                    />
@@ -544,7 +546,9 @@ export default function AttorneysPage() {
                               src={selectedAttorney.image} 
                               alt={selectedAttorney.name}
                               fill
-                              className="object-cover object-top"
+                              className={selectedAttorney.id === 'lupita-valenzuela-martinez' 
+                                ? "object-cover object-[center_20%]" 
+                                : "object-cover object-top"}
                               onError={handleImageError}
                               unoptimized
                             />
